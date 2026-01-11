@@ -1,10 +1,10 @@
-# Calendar Overbooking Conflict Resolver
+# Calendar-Overbooking-Conflict-Resolver
 
-This project is a Clarinet-based Clarity smart contract workspace for experimenting with calendar overbooking and "parallel timeline" resolution patterns.
+The **Calendar-Overbooking-Conflict-Resolver** is a Clarinet / Clarity project that explores how to manage calendar overbooking and "parallel timeline" resolution patterns.
 
 The system is centered around two independent smart contracts:
 
-- `maybe-attend-speculator`: manages probabilistic RSVP state for events, allowing users to signal "maybe" attendance with an explicit confidence score.
+- `maybe-attend-speculator`: manages probabilistic RSVP state for events, allowing users to signal "maybe" attendance with an explicit confidence score and preferred meeting when double-booked.
 - `meeting-escape-hatch`: manages polite, pre-committed escape hatches for meetings, recording on-chain reasons and timestamps to make excused absences verifiable.
 
 ## Project Structure
@@ -20,6 +20,7 @@ The system is centered around two independent smart contracts:
 1. **Resolve double-bookings conceptually** by:
    - Capturing "maybe" responses with confidence levels, not just binary yes/no.
    - Tracking per-event RSVP state for each user.
+   - Storing a preferred meeting per timeslot when a user is double-booked.
 2. **Provide cryptographically-plausible excuses** via:
    - On-chain records of escape-hatch reasons for meetings.
    - Timestamps that show when a user registered their intent to skip or leave a meeting.
@@ -34,8 +35,9 @@ The system is centered around two independent smart contracts:
 This contract focuses on RSVP management for events. It will:
 
 - Let organizers register events with identifiers and basic metadata.
-- Allow participants to submit a `maybe` RSVP with a confidence score.
+- Allow participants to submit a `maybe` RSVP with a confidence score between `u0` and `u100`.
 - Allow upgrading or downgrading RSVP decisions (e.g., from maybe → yes or maybe → no).
+- Track a user's preferred event in a potentially overbooked timeslot.
 - Expose read-only accessors to inspect RSVP state per event and per participant.
 
 ### 2. `meeting-escape-hatch`
